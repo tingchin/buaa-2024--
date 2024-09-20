@@ -1,4 +1,4 @@
-package token;
+package lexer;
 
 // Token类，用于记录词法分析的token
 public class Token {
