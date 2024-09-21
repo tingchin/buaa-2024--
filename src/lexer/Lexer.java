@@ -1,6 +1,10 @@
 package lexer;
 
 
+import error.Error;
+import error.ErrorHandler;
+import error.ErrorType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,33 +29,37 @@ public class Lexer {
     }
 
     // 保留字map，快速定位
-    private Map<String, Token.TokenType> reserveWords = new HashMap<>() {{
-        put("main", Token.TokenType.MAINTK);
-        put("const", Token.TokenType.CONSTTK);
-        put("int", Token.TokenType.INTTK);
-        put("char", Token.TokenType.CHARTK);
-        put("break", Token.TokenType.BREAKTK);
-        put("continue", Token.TokenType.CONTINUETK);
-        put("if", Token.TokenType.IFTK);
-        put("else", Token.TokenType.ELSETK);
-        put("for", Token.TokenType.FORTK);
-        put("void", Token.TokenType.VOIDTK);
+    private Map<String, TokenType> reserveWords = new HashMap<>() {{
+        put("main", TokenType.MAINTK);
+        put("const", TokenType.CONSTTK);
+        put("int", TokenType.INTTK);
+        put("char", TokenType.CHARTK);
+        put("break", TokenType.BREAKTK);
+        put("continue", TokenType.CONTINUETK);
+        put("if", TokenType.IFTK);
+        put("else", TokenType.ELSETK);
+        put("for", TokenType.FORTK);
+        put("void", TokenType.VOIDTK);
+        put("getint", TokenType.GETINTTK);
+        put("getchar", TokenType.GETCHARTK);
+        put("printf", TokenType.PRINTFTK);
+        put("return", TokenType.RETURNTK);
     }};
 
     // 单字符map，快速定位
-    private Map<Character, Token.TokenType> singleChars = new HashMap<>() {{
-        put('+', Token.TokenType.PLUS);
-        put('-', Token.TokenType.MINU);
-        put('*', Token.TokenType.MULT);
-        put('%', Token.TokenType.MOD);
-        put(';', Token.TokenType.SEMICN);
-        put(',', Token.TokenType.COMMA);
-        put('(', Token.TokenType.LPARENT);
-        put(')', Token.TokenType.RPARENT);
-        put('{', Token.TokenType.LBRACE);
-        put('}', Token.TokenType.RBRACE);
-        put('[', Token.TokenType.LBRACK);
-        put(']', Token.TokenType.RBRACK);
+    private Map<Character, TokenType> singleChars = new HashMap<>() {{
+        put('+', TokenType.PLUS);
+        put('-', TokenType.MINU);
+        put('*', TokenType.MULT);
+        put('%', TokenType.MOD);
+        put(';', TokenType.SEMICN);
+        put(',', TokenType.COMMA);
+        put('(', TokenType.LPARENT);
+        put(')', TokenType.RPARENT);
+        put('{', TokenType.LBRACE);
+        put('}', TokenType.RBRACE);
+        put('[', TokenType.LBRACK);
+        put(']', TokenType.RBRACK);
     }};
     // 词法分析
     public void lexerAnalyze(String sourceCode) {
@@ -83,7 +91,7 @@ public class Lexer {
                 }
                 number = Integer.parseInt(sbToken.toString()); // 留有接口防止后面需要
                 tokenValue = sbToken.toString();
-                tokensList.add(new Token(Token.TokenType.INTCON, tokenValue, line));
+                tokensList.add(new Token(TokenType.INTCON, tokenValue, line));
                 continue;
             } else if (curChar == '/') { // 读入第一个 /
                 // 注释和除号处理
@@ -110,7 +118,7 @@ public class Lexer {
                     }
                     continue;
                 } else { // 表示除号
-                    tokensList.add(new Token(Token.TokenType.DIV, "/", line));
+                    tokensList.add(new Token(TokenType.DIV, "/", line));
                 }
 
             } else if (curChar == '_' || Character.isLetter(curChar)) { // 保留字或者标识符
@@ -121,7 +129,7 @@ public class Lexer {
                     i++;
                 }
                 tokenValue = sbToken.toString();
-                tokensList.add(new Token(reserveWords.getOrDefault(tokenValue, Token.TokenType.IDENFR), tokenValue, line));
+                tokensList.add(new Token(reserveWords.getOrDefault(tokenValue, TokenType.IDENFR), tokenValue, line));
                 continue;
             } else if (singleChars.containsKey(curChar)) { // 单字符分界 + - * / ; , () [] {}
                 tokensList.add(new Token(singleChars.get(curChar), String.valueOf(curChar), line));
@@ -133,7 +141,7 @@ public class Lexer {
                 }
                 sbToken.append(sourceCode.charAt(i));
                 tokenValue = sbToken.toString();
-                tokensList.add(new Token(Token.TokenType.CHRCON, tokenValue, line));
+                tokensList.add(new Token(TokenType.CHRCON, tokenValue, line));
                 i++;
                 continue;
             } else if (curChar == '\"') { // 字符串常量
@@ -144,63 +152,65 @@ public class Lexer {
                 }
                 sbToken.append(sourceCode.charAt(i));
                 tokenValue = sbToken.toString();
-                tokensList.add(new Token(Token.TokenType.STRCON, tokenValue, line));
+                tokensList.add(new Token(TokenType.STRCON, tokenValue, line));
                 i++;
                 continue;
             } else if (curChar == '!' ) { // 某些可单可双分界符
                 if (nextChar == '=') {
                     tokenValue = "!=";
-                    tokensList.add(new Token(Token.TokenType.NEQ, tokenValue, line));
+                    tokensList.add(new Token(TokenType.NEQ, tokenValue, line));
                     i++;
                 } else {
                     tokenValue = "!";
-                    tokensList.add(new Token(Token.TokenType.NOT, tokenValue, line));
+                    tokensList.add(new Token(TokenType.NOT, tokenValue, line));
                 }
             } else if (curChar == '<' ) { // 某些可单可双分界符
                 if (nextChar == '=') {
                     tokenValue = "<=";
-                    tokensList.add(new Token(Token.TokenType.LEQ, tokenValue, line));
+                    tokensList.add(new Token(TokenType.LEQ, tokenValue, line));
                     i++;
                 } else {
                     tokenValue = "<";
-                    tokensList.add(new Token(Token.TokenType.LSS, tokenValue, line));
+                    tokensList.add(new Token(TokenType.LSS, tokenValue, line));
                 }
             } else if (curChar == '>' ) {
                 if (nextChar == '=') {
                     tokenValue = ">=";
-                    tokensList.add(new Token(Token.TokenType.GEQ, tokenValue, line));
+                    tokensList.add(new Token(TokenType.GEQ, tokenValue, line));
                     i++;
                 } else {
                     tokenValue = ">";
-                    tokensList.add(new Token(Token.TokenType.GRE, tokenValue, line));
+                    tokensList.add(new Token(TokenType.GRE, tokenValue, line));
                 }
             } else if (curChar == '=') {
                 if (nextChar == '=') {
                     tokenValue = "==";
-                    tokensList.add(new Token(Token.TokenType.EQL, tokenValue, line));
+                    tokensList.add(new Token(TokenType.EQL, tokenValue, line));
                     i++;
                 } else {
                     tokenValue = "=";
-                    tokensList.add(new Token(Token.TokenType.ASSIGN, tokenValue, line));
+                    tokensList.add(new Token(TokenType.ASSIGN, tokenValue, line));
                 }
             } else if (curChar == '|') {
                 if (nextChar == '|') {
                     tokenValue = "||";
-                    tokensList.add(new Token(Token.TokenType.OR, tokenValue, line));
+                    tokensList.add(new Token(TokenType.OR, tokenValue, line));
                     i++;
                 } else {
                     // error
-                    System.out.println("error " + line);
+                    ErrorHandler.getInstance().getErrors().add(new Error(ErrorType.a, line));
+                    //System.out.println("error " + line);
                 }
                 continue;
             } else if (curChar == '&') {
                 if (nextChar == '&') {
                     tokenValue = "&&";
-                    tokensList.add(new Token(Token.TokenType.AND, tokenValue, line));
+                    tokensList.add(new Token(TokenType.AND, tokenValue, line));
                     i++;
                 } else {
                     // error
-                    System.out.println("error" + line);
+                    ErrorHandler.getInstance().getErrors().add(new Error(ErrorType.a, line));
+                    //System.out.println("error" + line);
                 }
             }
             i++;
