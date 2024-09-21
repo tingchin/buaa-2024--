@@ -84,7 +84,6 @@ public class Lexer {
             } else if (Character.isDigit(curChar)) {
                 // 数字
                 StringBuilder sbToken = new StringBuilder();
-                sbToken.append(curChar);
                 while (i < codeLen && Character.isDigit(sourceCode.charAt(i))) {
                     sbToken.append(sourceCode.charAt(i));
                     i++;
@@ -123,7 +122,6 @@ public class Lexer {
 
             } else if (curChar == '_' || Character.isLetter(curChar)) { // 保留字或者标识符
                 StringBuilder sbToken = new StringBuilder();
-                sbToken.append(curChar);
                 while ((i < codeLen) && (Character.isLetter(sourceCode.charAt(i)) || Character.isDigit(sourceCode.charAt(i)) || sourceCode.charAt(i) == '_') ) {
                     sbToken.append(sourceCode.charAt(i));
                     i++;
@@ -134,18 +132,43 @@ public class Lexer {
             } else if (singleChars.containsKey(curChar)) { // 单字符分界 + - * / ; , () [] {}
                 tokensList.add(new Token(singleChars.get(curChar), String.valueOf(curChar), line));
             } else if (curChar == '\'') { // 字符常量
+//                StringBuilder sbToken = new StringBuilder();
+//                sbToken.append(curChar);
+//                i++;
+//                while ((i < codeLen) && (sourceCode.charAt(i) != '\'')) {
+//                    sbToken.append(sourceCode.charAt(i));
+//                    i++;
+//                }
+//                sbToken.append(sourceCode.charAt(i));
+//                tokenValue = sbToken.toString();
+//                tokensList.add(new Token(TokenType.CHRCON, tokenValue, line));
+//                i++;
+//                continue;
                 StringBuilder sbToken = new StringBuilder();
-                while ((i < codeLen) && (sourceCode.charAt(i) != '\'')) {
-                    sbToken.append(sourceCode.charAt(i));
-                    i++;
+                sbToken.append(curChar);
+                i++;
+                while (i < codeLen) {
+                    if (sourceCode.charAt(i) == '\\') {
+                        sbToken.append(sourceCode.charAt(i));
+                        i++;
+                        sbToken.append(sourceCode.charAt(i));
+                        i++;
+                    } else if (sourceCode.charAt(i) != '\'') {
+                        sbToken.append(sourceCode.charAt(i));
+                        i++;
+                    } else {
+                        sbToken.append(sourceCode.charAt(i));
+                        i++;
+                        break;
+                    }
                 }
-                sbToken.append(sourceCode.charAt(i));
                 tokenValue = sbToken.toString();
                 tokensList.add(new Token(TokenType.CHRCON, tokenValue, line));
-                i++;
                 continue;
             } else if (curChar == '\"') { // 字符串常量
                 StringBuilder sbToken = new StringBuilder();
+                sbToken.append(curChar);
+                i++;
                 while ((i < codeLen) && (sourceCode.charAt(i) != '\"')) {
                     sbToken.append(sourceCode.charAt(i));
                     i++;
@@ -198,10 +221,9 @@ public class Lexer {
                     i++;
                 } else {
                     // error
-                    ErrorHandler.getInstance().getErrors().add(new Error(ErrorType.a, line));
+                    ErrorHandler.getInstance().addError(new Error(ErrorType.a, line));
                     //System.out.println("error " + line);
                 }
-                continue;
             } else if (curChar == '&') {
                 if (nextChar == '&') {
                     tokenValue = "&&";
@@ -209,7 +231,7 @@ public class Lexer {
                     i++;
                 } else {
                     // error
-                    ErrorHandler.getInstance().getErrors().add(new Error(ErrorType.a, line));
+                    ErrorHandler.getInstance().addError(new Error(ErrorType.a, line));
                     //System.out.println("error" + line);
                 }
             }

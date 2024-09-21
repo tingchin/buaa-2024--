@@ -17,4 +17,5 @@ public class Error {
     public String toString() {
         return (line + " " + errorType);
     }
+
 }

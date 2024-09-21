@@ -11,11 +11,26 @@ public class ErrorHandler {
     // errors 列表
     private List<Error> errors = new ArrayList<>();
 
+    private static boolean haveError = false;
+
     public static ErrorHandler getInstance() {
         return instance;
     }
 
-    public List<Error> getErrors() {
-        return errors;
+
+    public void addError(Error error) {
+        haveError = true;
+        instance.errors.add(error);
+    }
+    public boolean isHaveError() {
+        return haveError;
+    }
+
+    public void printErrors(String path) {
+        StringBuilder sb = new StringBuilder();
+        for (Error error : errors) {
+            sb.append(error.toString()).append("\n");
+        }
+        utils.IoUtils.writeFile(path, sb.toString());
     }
 }
