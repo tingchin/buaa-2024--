@@ -1,4 +1,4 @@
-package parser.node;
+package parser;
 
 public enum NodeType {
     CompUnit,
