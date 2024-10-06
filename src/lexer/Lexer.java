@@ -88,7 +88,7 @@ public class Lexer {
                     sbToken.append(sourceCode.charAt(i));
                     i++;
                 }
-                number = Integer.parseInt(sbToken.toString()); // 留有接口防止后面需要
+                //number = Integer.parseInt(sbToken.toString()); // 留有接口防止后面需要
                 tokenValue = sbToken.toString();
                 tokensList.add(new Token(TokenType.INTCON, tokenValue, line));
                 continue;
