@@ -222,6 +222,7 @@ public class Lexer {
                 } else {
                     // error
                     ErrorHandler.getInstance().addError(new Error(ErrorType.a, line));
+                    tokensList.add(new Token(TokenType.OR, "||", line));
                     //System.out.println("error " + line);
                 }
             } else if (curChar == '&') {
@@ -232,6 +233,7 @@ public class Lexer {
                 } else {
                     // error
                     ErrorHandler.getInstance().addError(new Error(ErrorType.a, line));
+                    tokensList.add(new Token(TokenType.AND, "&&", line));
                     //System.out.println("error" + line);
                 }
             }
