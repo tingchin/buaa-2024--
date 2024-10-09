@@ -1,130 +1,90 @@
-const int MAXINT = 2147483647;
-int MININT = -2147483648;
-const char MAXCHAR = '~';
-char MINCHAR = ' ';
+// All Decl's forms exist in global variable decl
+const int AZ = 100;
+const int AZA1 = 200, AZA2 = 300;
 
-const int ZERO = 0, ONE = 1, TWO = 2, THREE = 3, FOUR = 4;
-const int FIVE = 5;
-const int SIX = 6, SEVEN = 7, EIGHT = 8, NINE = 8 + 1, TEN = 10;
-const int ZERO_TO_TEN[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-const int NO_USE1[11] = {};
-const int NO_USE2[11] = {0, 1, 2, 3};
+int az;
+int aza = 100;
+int azaz1, azaz2 = 200;
 
-const char A = 'A', B = 'B', C = 'C', D = 'D', E = 'E';
-const char F = 'F';
-const char G = 'G', H = 'H', I = 'I', J = 'J';
-const char ABCDEFGHIJ[11] = {'A', 'B', 'C' , 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-const char NO_USE3[11] = {};
-const char NO_USE4[11] = "NO_USE4";
-
-int fibonacci[15];
-
-void cal_fibonacci()
-{
-	fibonacci[1] = 1;
-	int i;
-	for (i = 2; i < 15; i = i + 1)
-	{
-		fibonacci[i] = fibonacci[i - 1] + fibonacci[i - 2];
+// All Block's forms exist in while() in func1, except for (return exp)
+void func1() {
+    for (;1;) {
+        int i = 0;
+        i = 0;
+        i * 8;
+        { ; }
+        if (i != 0) continue;
+        if (i != 0); else;
+        i = getint();
+        printf("hello? ");
+        printf("%d ", i);
+        printf("%d %d\n", i, i);
+        break;
+    }
+    if (1) {
 	}
-	return;
+    return;
 }
 
-void print_fibonacci_n(int n1, int n2, int n3)
-{
-	printf("Fibonacci Array %d : %d  %d : %d  %d : %d\n", n1, fibonacci[n1], n2, fibonacci[n2], n3, fibonacci[n3]);
-	return;
+// All Ident's form and Other forms exist in func2
+int func2() {
+    int abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 = 43;
+    int temp;
+    temp = abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890;
+    int a;
+    int a1b3;
+    /*
+    This is annotation1
+    */
+    // This is annotation2
+    int d = 0;
+    0;
+    1234567890;
+    return 100;
 }
 
+// All Cond's forms exist in func3
+void func3(int in) {
+    printf("func3 input = %d\n", in);
+    int a = 7;
+    int b = 8;
+    if (!(a + b));
+    if ((a + b) < (a + b));
+    if ((a + b) > (a + b));
+    if ((a + b) <= (a + b));
+    if ((a + b) >= (a + b));
+    if ((a + b) == (a + b));
+    if ((a + b) != (a + b));
+    return;
+}
 
-int main()
-{
-	{
-		
-	}
-	{
-		;;;
-	}
-	printf("22371298\n");
-	int n1;
-	n1 = getint();
-	int n2;
-	n2 = getint();
-	int n3;
-	n3 = getint();
-	cal_fibonacci();
-	if (n1 > 14 || n2 > 14 || n3 > 14)
-	{
-		
-	}
-	else
-	{
-		print_fibonacci_n(n1, n2, n3);
-	}
-	int max;
-	max = MAXINT;
-	int ten;
-	ten = ZERO_TO_TEN[TEN];
-	
-	int i = 1;
-	for (; i < 2; i = i + 1)
-	{
-		printf("%d\n",i);
-	}
+// All Exp's forms exist in func4
+int func4(int param1, int param2, int param3) {
+    int temp1 = (param1 * param2) / (param2) % (param1) + param3 - param3 * (param1 / param3 / param3);
+    const int temp2 = (AZ + AZA1 - AZA2) * AZ * (18 / 6) - 16 * (0);
+    int temp3;
+    temp3 = AZ * AZA1 % AZA2;
+    int a = temp3 + 4;
+    int b = (a);
+    int c = func2();
+    int d = - + - +func2();
+    int e = c * b;
+    int f = e / b;
+    int g = f % c;
+    int h = f + g;
+    int i = f - g;
+    printf("%d %d %d %d %d %d %d %d %d\n", a, b, c, d, e, f, g, h, i);
+    return 1;
+}
 
-	for (i = 2;;i = i + 1)
-	{
-		if (i == 5 || i <= 6 || i >= 90 || i == 100 || i != 80)
-		{
-			break;
-		}
-	}
-	for (i = 2;i <= 5;)
-	{
-		if (i != 90) break;
- 	}
- 	i = 100;
- 	for (;;i = i + 1)
- 	{
- 		if (i > 10) break;
-	}
- 	for (;i > 50;)
- 	{
- 		if(i >80 && i < 120 || i == 100)
- 		{
- 			break;
-		 }
-		 else
-		 {
-		 	continue;
-		 }
-	}
-	for (i = 100;;)
-	{
-		if (i == 100) break;
-		else continue;
-	}
-	for (;;)
-	{
-		if (1 != 0)
-		{
-			break;
-		}
-	}
-
-	char read;
-	read = getchar();
-
-	printf("a\n");
-	printf("a\n");
-	printf("a\n");
-	printf("a\n");
-	printf("a\n");
-	printf("a\n");
-	printf("a\n");
-
-
-
-
+int main() {
+    func1();
+    printf("func1 done!\n");
+    func2();
+    printf("func2 done!\n");
+    func3(az);
+    printf("func3 done!\n");
+    func4(1, 2, 3);
+    printf("func4 done!\n");
     return 0;
 }

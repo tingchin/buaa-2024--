@@ -24,7 +24,7 @@ public class IoUtils {
 
     public static void writeFile(String path, String content) {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path, true));
             bw.write(content);
             bw.close();
         } catch (IOException e) {
