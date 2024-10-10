@@ -2,6 +2,7 @@ package error;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ErrorHandler {
@@ -28,6 +29,7 @@ public class ErrorHandler {
 
     public void printErrors(String path) {
         StringBuilder sb = new StringBuilder();
+        Collections.sort(errors);
         for (Error error : errors) {
             sb.append(error.toString()).append("\n");
         }
