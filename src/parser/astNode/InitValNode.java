@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -29,19 +29,19 @@ public class InitValNode implements Node {
         if (expr != null) {
             expr.print();
         } else if (stringToken != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, stringToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, stringToken.toString());
         } else {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());
             if (!expNodes.isEmpty()) {
                 for (int i = 0; i < expNodes.size(); i++) {
                     expNodes.get(i).print();
                     if (i != expNodes.size() - 1) {
-                        IoUtils.writeFile(Settings.syntaxOutputPath, commas.get(i).toString());
+                        IOUtils.writeFile(Settings.syntaxOutputPath, commas.get(i).toString());
                     }
                 }
             }
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightBrace.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightBrace.toString());
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<InitVal>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<InitVal>\n");
     }
 }

@@ -10,6 +10,14 @@ public class BlockItemNode implements Node {
         this.stmt = stmt;
     }
 
+    public DeclNode getDecl() {
+        return decl;
+    }
+
+    public StmtNode getStmt() {
+        return stmt;
+    }
+
     @Override
     public void print() {
         if (decl != null) {

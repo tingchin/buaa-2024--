@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class FuncTypeNode implements Node {
@@ -12,9 +12,13 @@ public class FuncTypeNode implements Node {
         this.funcType = funcType;
     }
 
+    public Token getFuncType() {
+        return funcType;
+    }
+
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, funcType.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<FuncType>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, funcType.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<FuncType>\n");
     }
 }

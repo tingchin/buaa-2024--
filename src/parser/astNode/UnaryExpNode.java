@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class UnaryExpNode implements Node {
@@ -36,16 +36,16 @@ public class UnaryExpNode implements Node {
         if (primary != null) {
             primary.print();
         } else if (identToken != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftParen.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftParen.toString());
             if (funcRParams != null) {
                 funcRParams.print();
             }
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightParen.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightParen.toString());
         } else {
             unaryOp.print();
             unaryExp.print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<UnaryExp>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<UnaryExp>\n");
     }
 }

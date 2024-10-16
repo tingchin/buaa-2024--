@@ -1,8 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import lexer.TokenType;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class PrimaryExpNode implements Node {
@@ -35,9 +34,9 @@ public class PrimaryExpNode implements Node {
     @Override
     public void print() {
         if (expNode != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftParenToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftParenToken.toString());
             expNode.print();
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightParenToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightParenToken.toString());
         } else if (lValNode != null) {
             lValNode.print();
         } else if (characterNode != null) {
@@ -45,6 +44,6 @@ public class PrimaryExpNode implements Node {
         } else {
             numberNode.print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<PrimaryExp>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<PrimaryExp>\n");
     }
 }

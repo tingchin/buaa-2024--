@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -20,9 +20,9 @@ public class FuncRParamsNode implements Node {
     public void print() {
         expNodes.get(0).print();
         for (int i = 1; i < expNodes.size(); i++) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, commas.get(i - 1).toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, commas.get(i - 1).toString());
             expNodes.get(i).print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<FuncRParams>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<FuncRParams>\n");
     }
 }

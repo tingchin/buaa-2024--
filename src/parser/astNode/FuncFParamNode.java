@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class FuncFParamNode implements Node {
@@ -18,14 +18,26 @@ public class FuncFParamNode implements Node {
         this.rightBracket = rightBracket;
     }
 
+    public BTypeNode getbTypeNode() {
+        return bTypeNode;
+    }
+
+    public Token getIdentToken() {
+        return identToken;
+    }
+
+    public Token getLeftBracket() {
+        return leftBracket;
+    }
+
     @Override
     public void print() {
         bTypeNode.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
         if (leftBracket != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftBracket.toString());
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightBracket.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftBracket.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightBracket.toString());
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<FuncFParam>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<FuncFParam>\n");
     }
 }

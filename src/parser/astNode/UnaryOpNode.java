@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class UnaryOpNode implements Node {
@@ -13,7 +13,7 @@ public class UnaryOpNode implements Node {
 
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, operator.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<UnaryOp>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, operator.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<UnaryOp>\n");
     }
 }

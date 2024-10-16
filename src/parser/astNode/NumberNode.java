@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class NumberNode implements Node {
@@ -13,7 +13,7 @@ public class NumberNode implements Node {
 
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, token.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<Number>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, token.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<Number>\n");
     }
 }

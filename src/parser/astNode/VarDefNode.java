@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class VarDefNode implements Node{
@@ -22,18 +22,26 @@ public class VarDefNode implements Node{
         this.initValNode = initValNode;
     }
 
+    public Token getIdentNode() {
+        return identNode;
+    }
+
+    public Token getLeftBracket() {
+        return leftBracket;
+    }
+
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, identNode.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, identNode.toString());
         if (leftBracket != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftBracket.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftBracket.toString());
             constExpNode.print();
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightBracket.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightBracket.toString());
         }
         if (initValNode != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, equalToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, equalToken.toString());
             initValNode.print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<VarDef>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<VarDef>\n");
     }
 }

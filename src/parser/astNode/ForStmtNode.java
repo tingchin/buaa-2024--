@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class ForStmtNode implements Node {
@@ -19,8 +19,8 @@ public class ForStmtNode implements Node {
     @Override
     public void print() {
         lValNode.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, operator.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, operator.toString());
         expNode.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<ForStmt>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<ForStmt>\n");
     }
 }

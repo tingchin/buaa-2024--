@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class LValNode implements Node {
@@ -20,12 +20,12 @@ public class LValNode implements Node {
 
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
         if (leftBracketToken != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftBracketToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftBracketToken.toString());
             expNode.print();
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightBracketToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightBracketToken.toString());
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<LVal>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<LVal>\n");
     }
 }

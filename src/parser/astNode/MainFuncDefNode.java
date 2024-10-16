@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class MainFuncDefNode implements Node{
@@ -20,13 +20,17 @@ public class MainFuncDefNode implements Node{
         this.block = block;
     }
 
+    public BlockNode getBlock() {
+        return block;
+    }
+
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, intToken.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, mainToken.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, leftParen.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, rightParen.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, intToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, mainToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, leftParen.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, rightParen.toString());
         block.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<MainFuncDef>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<MainFuncDef>\n");
     }
 }

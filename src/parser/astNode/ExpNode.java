@@ -1,6 +1,6 @@
 package parser.astNode;
 
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class ExpNode implements Node {
@@ -13,6 +13,6 @@ public class ExpNode implements Node {
     @Override
     public void print() {
         addExpNode.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<Exp>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<Exp>\n");
     }
 }

@@ -1,6 +1,6 @@
 package parser.astNode;
 
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class CondNode implements Node {
@@ -13,6 +13,6 @@ public class CondNode implements Node {
     @Override
     public void print() {
         lOrExp.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<Cond>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<Cond>\n");
     }
 }

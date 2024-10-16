@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -19,13 +19,17 @@ public class BlockNode implements Node {
 
     private List<BlockItemNode> blockItemNodes;
 
+    public List<BlockItemNode> getBlockItemNodes() {
+        return blockItemNodes;
+    }
+
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());
         for (BlockItemNode blockItemNode : blockItemNodes) {
             blockItemNode.print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, rightBrace.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<Block>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, rightBrace.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<Block>\n");
     }
 }

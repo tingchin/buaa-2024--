@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -9,15 +9,15 @@ import java.util.List;
 public class ConstDefNode implements Node {
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
         for (int i = 0; i < constExpNodes.size(); i++) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftBrackets.get(i).toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftBrackets.get(i).toString());
             constExpNodes.get(i).print();
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightBrackets.get(i).toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightBrackets.get(i).toString());
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, equalToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, equalToken.toString());
         constInitValNode.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<ConstDef>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<ConstDef>\n");
     }
 
     // ConstDef → Ident [ '[' ConstExp ']' ] '=' ConstInitVal
@@ -35,5 +35,17 @@ public class ConstDefNode implements Node {
         this.rightBrackets = rightBrackets;
         this.equalToken = equalToken;
         this.constInitValNode = constInitValNode;
+    }
+
+    public Token getIdentToken() {
+        return identToken;
+    }
+
+    public List<Token> getLeftBrackets() {
+        return leftBrackets;
+    }
+
+    public List<ConstExpNode> getConstExpNodes() {
+        return constExpNodes;
     }
 }

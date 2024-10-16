@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -29,18 +29,18 @@ public class ConstInitValNode implements Node{
         if (constExp != null) {
             constExp.print();
         } else if (stringToken != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, stringToken.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, stringToken.toString());
         } else {
-            IoUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());
             if (!constExpNodes.isEmpty()) {
                 constExpNodes.get(0).print();
                 for (int i = 1; i < constExpNodes.size(); i++) {
-                    IoUtils.writeFile(Settings.syntaxOutputPath, commas.get(i - 1).toString());
+                    IOUtils.writeFile(Settings.syntaxOutputPath, commas.get(i - 1).toString());
                     constExpNodes.get(i).print();
                 }
             }
-            IoUtils.writeFile(Settings.syntaxOutputPath, rightBrace.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, rightBrace.toString());
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<ConstInitVal>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<ConstInitVal>\n");
     }
 }

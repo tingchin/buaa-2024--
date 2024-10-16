@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class AddExpNode implements Node {
@@ -19,9 +19,9 @@ public class AddExpNode implements Node {
     @Override
     public void print() {
         mulExp.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<AddExp>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<AddExp>\n");
         if (operator != null) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, operator.toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, operator.toString());
             addExp.print();
         }
     }

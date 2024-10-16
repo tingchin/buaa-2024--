@@ -1,7 +1,6 @@
 package parser.astNode;
 
-import jdk.jfr.EventSettings;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -18,6 +17,18 @@ public class CompUnitNode implements Node{
         this.mainFun = mainFun;
     }
 
+    public List<DeclNode> getDecls() {
+        return decls;
+    }
+
+    public List<FuncDefNode> getFunc() {
+        return func;
+    }
+
+    public MainFuncDefNode getMainFun() {
+        return mainFun;
+    }
+
     @Override
     public void print() {
         for (DeclNode decl : decls) {
@@ -27,7 +38,7 @@ public class CompUnitNode implements Node{
             funcDefNode.print();
         }
         mainFun.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<CompUnit>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<CompUnit>\n");
 
     }
 }

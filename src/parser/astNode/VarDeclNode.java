@@ -1,7 +1,7 @@
 package parser.astNode;
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 import java.util.List;
@@ -19,15 +19,23 @@ public class VarDeclNode implements Node {
         this.semicnToken = semicnToken;
     }
 
+    public BTypeNode getbType() {
+        return bType;
+    }
+
+    public List<VarDefNode> getVarDefs() {
+        return varDefs;
+    }
+
     @Override
     public void print() {
         bType.print();
         varDefs.get(0).print();
         for (int i = 1; i < varDefs.size(); i++) {
-            IoUtils.writeFile(Settings.syntaxOutputPath, commas.get(i - 1).toString());
+            IOUtils.writeFile(Settings.syntaxOutputPath, commas.get(i - 1).toString());
             varDefs.get(i).print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, semicnToken.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<VarDecl>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, semicnToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<VarDecl>\n");
     }
 }

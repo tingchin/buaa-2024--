@@ -2,7 +2,7 @@ package parser.astNode;
 
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class BTypeNode implements Node {
@@ -13,8 +13,12 @@ public class BTypeNode implements Node {
         this.token = token;
     }
 
+    public Token getToken() {
+        return token;
+    }
+
     @Override
     public void print() {
-        IoUtils.writeFile(Settings.syntaxOutputPath, token.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, token.toString());
     }
 }

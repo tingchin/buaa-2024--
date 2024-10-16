@@ -2,9 +2,8 @@ package utils;
 
 
 import java.io.*;
-import java.util.List;
 
-public class IoUtils {
+public class IOUtils {
     public static String readFile(String path) {
         StringBuilder sb = new StringBuilder();
         try {

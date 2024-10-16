@@ -2,7 +2,7 @@ package parser.astNode;
 
 
 import lexer.Token;
-import utils.IoUtils;
+import utils.IOUtils;
 import utils.Settings;
 
 public class FuncDefNode implements Node {
@@ -23,16 +23,32 @@ public class FuncDefNode implements Node {
         this.identToken = identToken;
     }
 
+    public FuncTypeNode getFuncType() {
+        return funcType;
+    }
+
+    public Token getIdentToken() {
+        return identToken;
+    }
+
+    public FuncFParamsNode getFuncFParams() {
+        return funcFParams;
+    }
+
+    public BlockNode getBlock() {
+        return block;
+    }
+
     @Override
     public void print() {
         funcType.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
-        IoUtils.writeFile(Settings.syntaxOutputPath, leftParent.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, leftParent.toString());
         if (funcFParams != null) {
             funcFParams.print();
         }
-        IoUtils.writeFile(Settings.syntaxOutputPath, rightParent.toString());
+        IOUtils.writeFile(Settings.syntaxOutputPath, rightParent.toString());
         block.print();
-        IoUtils.writeFile(Settings.syntaxOutputPath, "<FuncDef>\n");
+        IOUtils.writeFile(Settings.syntaxOutputPath, "<FuncDef>\n");
     }
 }

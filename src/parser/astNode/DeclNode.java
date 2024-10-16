@@ -10,6 +10,14 @@ public class DeclNode implements Node{
         this.varDecl = varDecl;
     }
 
+    public ConstDeclNode getConstDecl() {
+        return constDecl;
+    }
+
+    public VarDeclNode getVarDecl() {
+        return varDecl;
+    }
+
     @Override
     public void print() {
         if (constDecl != null) {

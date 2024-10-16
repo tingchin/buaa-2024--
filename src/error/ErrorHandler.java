@@ -1,6 +1,8 @@
 package error;
 
 
+import utils.IOUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,6 @@ public class ErrorHandler {
         for (Error error : errors) {
             sb.append(error.toString()).append("\n");
         }
-        utils.IoUtils.writeFile(path, sb.toString());
+        IOUtils.writeFile(path, sb.toString());
     }
 }
