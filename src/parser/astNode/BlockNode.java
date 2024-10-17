@@ -23,6 +23,10 @@ public class BlockNode implements Node {
         return blockItemNodes;
     }
 
+    public Token getRightBrace() {
+        return rightBrace;
+    }
+
     @Override
     public void print() {
         IOUtils.writeFile(Settings.syntaxOutputPath, leftBrace.toString());

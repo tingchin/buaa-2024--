@@ -143,7 +143,7 @@ public class Visitor {
         }
     }
 
-    // TODO
+    //
     private void visitFuncDef(FuncDefNode funcDef) {
         // FuncDef → FuncType Ident '(' [FuncFParams] ')' Block // b g
 
@@ -157,14 +157,16 @@ public class Visitor {
             type = SymbolType.VoidFunc;
         }
 
-        // 函数名称 error
+        // 函数名称 error b
         boolean hasErrorB = false;
         String funName = funcDef.getIdentToken().getValue();
+        FunctionSymbol functionSymbol = null;
         if (current.getSymbolTable().containsKey(funName)) {
             ErrorHandler.getInstance().addError(new Error(ErrorType.b, funcDef.getIdentToken().getLine()));
             hasErrorB = true;
         } else {
-            current.getSymbolTable().put(funName, new FunctionSymbol(type, funName, current.getLayer()));
+            functionSymbol = new FunctionSymbol(type, funName, current.getLayer());
+            current.getSymbolTable().put(funName, functionSymbol);
         }
 
         // 函数参数
@@ -172,35 +174,56 @@ public class Visitor {
         // 下一层符号表
         goToNextTable();
         if (funcDef.getFuncFParams() != null) {
-            visitFuncFParams(funcDef.getFuncFParams());
+            // 同时把参数加入
+            visitFuncFParams(funcDef.getFuncFParams(), params);
         }
 
         visitBlock(funcDef.getBlock());
 
         // 符号表回来
         current = current.getLastLayer();
-        // 为函数符号添加参数
-        addParamToFunDef();
+//        // 为函数符号添加参数
+//        addParamToFunDef(funcDef.getFuncFParams());
+        functionSymbol.setParams(params);
+
+        // 检查 return 是否存在
+        if (type.equals(SymbolType.IntFunc) || type.equals(SymbolType.CharFunc)) {
+            if (!checkReturn(funcDef.getBlock())) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.g, funcDef.getBlock().getRightBrace().getLine()));
+            }
+        }
     }
 
-    // TODO
-    private void addParamToFunDef() {
-
+    private boolean checkReturn(BlockNode block) {
+        List<BlockItemNode> blockItemNodes = block.getBlockItemNodes();
+        boolean hasReturn = false;
+        for (BlockItemNode blockItemNode : blockItemNodes) {
+            if (blockItemNode.getDecl() != null) {
+                continue;
+            }
+            // stmt to check return
+            if (blockItemNode.getStmt().getType().equals(StmtNode.StmtType.Return)) {
+                hasReturn = true;
+                break;
+            }
+        }
+        return hasReturn;
     }
+
 
     //
-    private void visitFuncFParams(FuncFParamsNode funcFParamsNode) {
+    private void visitFuncFParams(FuncFParamsNode funcFParamsNode, List<FunctionParam> params) {
         // FuncFParams → FuncFParam { ',' FuncFParam }
         if (funcFParamsNode.getParams() != null) {
             for (FuncFParamNode param : funcFParamsNode.getParams()) {
-                visitFuncFParam(param);
+                visitFuncFParam(param, params);
             }
         }
 
     }
 
-    // TODO
-    private void visitFuncFParam(FuncFParamNode funcFParamNode) {
+    //
+    private void visitFuncFParam(FuncFParamNode funcFParamNode, List<FunctionParam> params) {
         // FuncFParam → BType Ident ['[' ']'] // b
         String paramName = funcFParamNode.getIdentToken().getValue();
         SymbolType type = null;
@@ -219,11 +242,17 @@ public class Visitor {
         }
 
         // error !!!!!!!!!!!!
-        current.getSymbolTable().put(paramName, new VariableSymbol(type, paramName, current.getLayer()));
+        if (current.getSymbolTable().containsKey(paramName)) {
+            ErrorHandler.getInstance().addError(new Error(ErrorType.b, funcFParamNode.getIdentToken().getLine()));
+        } else {
+            current.getSymbolTable().put(paramName, new VariableSymbol(type, paramName, current.getLayer()));
+            params.add(new FunctionParam(type, paramName, current.getLayer()));
+        }
+
 
     }
 
-    // TODO
+    //
     private void visitBlock(BlockNode block) {
         // Block → '{' { BlockItem } '}'
         for (BlockItemNode blockItemNode : block.getBlockItemNodes()) {
@@ -231,7 +260,7 @@ public class Visitor {
         }
     }
 
-    // TODO
+    //
     private void visitBlockItem(BlockItemNode blockItemNode) {
         // BlockItem → Decl | Stmt
         if (blockItemNode.getDecl() != null) {
@@ -292,12 +321,32 @@ public class Visitor {
 
     }
 
+    //
+    private Symbol findTheVariable(String name) {
+        SymbolTable temp = current;
+        while (temp != null) {
+            if (temp.getSymbolTable().containsKey(name)) {
+                return temp.getSymbolTable().get(name);
+            }
+            temp = temp.getLastLayer();
+        }
+        return null;
+    }
+
     // TODO
+    private void visitLVal(LValNode lValNode) {
+
+    }
+
+    //
     private void visitMainFuncDef(MainFuncDefNode mainFuncDef) {
         //  MainFuncDef → 'int' 'main' '(' ')' Block // g
         goToNextTable();
         visitBlock(mainFuncDef.getBlock());
         current = current.getLastLayer();
+        if (checkReturn(mainFuncDef.getBlock())) {
+            ErrorHandler.getInstance().addError(new Error(ErrorType.g, mainFuncDef.getBlock().getRightBrace().getLine()));
+        }
     }
 
     private void goToNextTable() {

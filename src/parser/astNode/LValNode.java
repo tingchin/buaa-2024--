@@ -18,6 +18,22 @@ public class LValNode implements Node {
         this.rightBracketToken = rightBracketToken;
     }
 
+    public Token getIdentToken() {
+        return identToken;
+    }
+
+    public Token getLeftBracketToken() {
+        return leftBracketToken;
+    }
+
+    public ExpNode getExpNode() {
+        return expNode;
+    }
+
+    public Token getRightBracketToken() {
+        return rightBracketToken;
+    }
+
     @Override
     public void print() {
         IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());
