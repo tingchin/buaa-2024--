@@ -16,6 +16,18 @@ public class ForStmtNode implements Node {
         this.expNode = expNode;
     }
 
+    public LValNode getlValNode() {
+        return lValNode;
+    }
+
+    public Token getOperator() {
+        return operator;
+    }
+
+    public ExpNode getExpNode() {
+        return expNode;
+    }
+
     @Override
     public void print() {
         lValNode.print();

@@ -16,6 +16,18 @@ public class RelExpNode implements Node {
         this.relExp = relExp;
     }
 
+    public AddExpNode getAddExp() {
+        return addExp;
+    }
+
+    public Token getOperator() {
+        return operator;
+    }
+
+    public RelExpNode getRelExp() {
+        return relExp;
+    }
+
     @Override
     public void print() {
         addExp.print();

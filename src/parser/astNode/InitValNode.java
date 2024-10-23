@@ -24,6 +24,30 @@ public class InitValNode implements Node {
         this.stringToken = stringToken;
     }
 
+    public ExpNode getExpr() {
+        return expr;
+    }
+
+    public Token getLeftBrace() {
+        return leftBrace;
+    }
+
+    public List<ExpNode> getExpNodes() {
+        return expNodes;
+    }
+
+    public Token getRightBrace() {
+        return rightBrace;
+    }
+
+    public List<Token> getCommas() {
+        return commas;
+    }
+
+    public Token getStringToken() {
+        return stringToken;
+    }
+
     @Override
     public void print() {
         if (expr != null) {

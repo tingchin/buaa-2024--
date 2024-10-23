@@ -9,6 +9,15 @@ public class VarDefNode implements Node{
     private Token identNode;
     private Token leftBracket;
     private ConstExpNode constExpNode;
+
+    public ConstExpNode getConstExpNode() {
+        return constExpNode;
+    }
+
+    public InitValNode getInitValNode() {
+        return initValNode;
+    }
+
     private Token rightBracket;
     private Token equalToken;
     private InitValNode initValNode;

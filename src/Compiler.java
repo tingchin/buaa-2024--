@@ -17,12 +17,17 @@ public class Compiler {
         Parser.getInstance().setTokens(Lexer.getInstance().getTokens());
         Parser.getInstance().parse();
 
+        // 语法分析
+        Visitor visitor = new Visitor();
+        visitor.setTokens(Lexer.getInstance().getTokens());
+        visitor.visit(Parser.getInstance().getRoot());
 
-        // error
+        // ERROR
         if (ErrorHandler.getInstance().isHaveError()) {
             ErrorHandler.getInstance().printErrors(Settings.errorPath);
             return;
         }
+
         //输出
         if (Settings.lexer) {
             StringBuilder sb = new StringBuilder();
@@ -35,11 +40,11 @@ public class Compiler {
         if (Settings.syntax) {
             Parser.getInstance().printAns();
         }
-        Visitor visitor = new Visitor();
-        visitor.visit(Parser.getInstance().getRoot());
+
         if (Settings.symbol) {
             visitor.print();
         }
+
 
     }
 }

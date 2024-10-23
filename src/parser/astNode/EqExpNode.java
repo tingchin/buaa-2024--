@@ -16,6 +16,18 @@ public class EqExpNode implements Node {
         this.eqExpNode = eqExpNode;
     }
 
+    public RelExpNode getRelExpNode() {
+        return relExpNode;
+    }
+
+    public Token getOperator() {
+        return operator;
+    }
+
+    public EqExpNode getEqExpNode() {
+        return eqExpNode;
+    }
+
     @Override
     public void print() {
         relExpNode.print();

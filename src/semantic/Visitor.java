@@ -3,6 +3,7 @@ package semantic;
 import error.Error;
 import error.ErrorHandler;
 import error.ErrorType;
+import lexer.Token;
 import lexer.TokenType;
 import parser.astNode.*;
 import symbol.*;
@@ -10,18 +11,26 @@ import symbol.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Visitor {
     private SymbolTable current;
     private int loop;
     private int layerCnt;
     private SymbolTable global;
+    private int voidFun;
+    private List<Token> tokens;
 
     public Visitor() {
+        this.voidFun = 0;
         this.loop = 0;
         this.layerCnt = 1;
         this.global = new SymbolTable();
         this.current = global;
+    }
+
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
     }
 
     public void print() {
@@ -72,6 +81,23 @@ public class Visitor {
         }
     }
 
+    private void visitConstExp(ConstExpNode constExp) {
+        //  ConstExp → AddExp
+        visitAddExp(constExp.getAddExp());
+    }
+
+    private void visitConstInitVal(ConstInitValNode constInitVal) {
+        // ConstInitVal → ConstExp | '{' [ ConstExp { ',' ConstExp } ] '}' | StringConst
+        if (constInitVal.getConstExp() != null) {
+            visitConstExp(constInitVal.getConstExp());
+        } else {
+            assert constInitVal.getConstExpNodes() != null;
+            for (ConstExpNode constExpNode : constInitVal.getConstExpNodes()) {
+                visitConstExp(constExpNode);
+            }
+        }
+    }
+
     private void visitConstDef(String type, ConstDefNode constDef) {
         // ConstDef → Ident [ '[' ConstExp ']' ] '=' ConstInitVal // b
         String name = constDef.getIdentToken().getValue();
@@ -79,6 +105,7 @@ public class Visitor {
             // error check
             if (current.getSymbolTable().containsKey(name)) {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.b, constDef.getIdentToken().getLine()));
+                return;
             } else {
                 if (type.equals("int")) {
                     current.getSymbolTable().put(name, new ArrayVariableSymbol(SymbolType.ConstIntArray, name, current.getLayer()));
@@ -86,16 +113,33 @@ public class Visitor {
                     current.getSymbolTable().put(name, new ArrayVariableSymbol(SymbolType.ConstCharArray, name, current.getLayer()));
                 }
             }
+            if (constDef.getConstExpNodes() != null) {
+                for (ConstExpNode constExpNode : constDef.getConstExpNodes()) {
+                    visitConstExp(constExpNode);
+                }
+            }
+            if (constDef.getConstInitValNode() != null) {
+                visitConstInitVal(constDef.getConstInitValNode());
+            }
         } else {
             // error check
             if (current.getSymbolTable().containsKey(name)) {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.b, constDef.getIdentToken().getLine()));
+                return;
             } else {
                 if (type.equals("int")) {
                     current.getSymbolTable().put(name, new VariableSymbol(SymbolType.ConstInt, name, current.getLayer()));
                 } else {
                     current.getSymbolTable().put(name, new VariableSymbol(SymbolType.ConstChar, name, current.getLayer()));
                 }
+            }
+            if (constDef.getConstExpNodes() != null) {
+                for (ConstExpNode constExpNode : constDef.getConstExpNodes()) {
+                    visitConstExp(constExpNode);
+                }
+            }
+            if (constDef.getConstInitValNode() != null) {
+                visitConstInitVal(constDef.getConstInitValNode());
             }
         }
     }
@@ -122,6 +166,7 @@ public class Visitor {
             // error check
             if (current.getSymbolTable().containsKey(name)) {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.b, varDef.getIdentNode().getLine()));
+                return;
             } else {
                 if (type.equals("int")) {
                     current.getSymbolTable().put(name, new ArrayVariableSymbol(SymbolType.IntArray, name, current.getLayer()));
@@ -129,16 +174,41 @@ public class Visitor {
                     current.getSymbolTable().put(name, new ArrayVariableSymbol(SymbolType.CharArray, name, current.getLayer()));
                 }
             }
+            if (varDef.getConstExpNode() != null) {
+                visitConstExp(varDef.getConstExpNode());
+            }
+            if (varDef.getInitValNode() != null) {
+                visitInitVal(varDef.getInitValNode());
+            }
         } else {
             // error check
             if (current.getSymbolTable().containsKey(name)) {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.b, varDef.getIdentNode().getLine()));
+                return;
             } else {
                 if (type.equals("int")) {
                     current.getSymbolTable().put(name, new VariableSymbol(SymbolType.Int, name, current.getLayer()));
                 } else {
                     current.getSymbolTable().put(name, new VariableSymbol(SymbolType.Char, name, current.getLayer()));
                 }
+            }
+            if (varDef.getConstExpNode() != null) {
+                visitConstExp(varDef.getConstExpNode());
+            }
+            if (varDef.getInitValNode() != null) {
+                visitInitVal(varDef.getInitValNode());
+            }
+        }
+    }
+
+    private void visitInitVal(InitValNode initVal) {
+        // //  InitVal → Exp | '{' [ Exp { ',' Exp } ] '}' | StringConst
+        if (initVal.getExpr() != null) {
+            visitExp(initVal.getExpr());
+        } else {
+            assert initVal.getExpNodes() != null;
+            for (ExpNode expNode : initVal.getExpNodes()) {
+                visitExp(expNode);
             }
         }
     }
@@ -158,12 +228,12 @@ public class Visitor {
         }
 
         // 函数名称 error b
-        boolean hasErrorB = false;
+
         String funName = funcDef.getIdentToken().getValue();
         FunctionSymbol functionSymbol = null;
         if (current.getSymbolTable().containsKey(funName)) {
             ErrorHandler.getInstance().addError(new Error(ErrorType.b, funcDef.getIdentToken().getLine()));
-            hasErrorB = true;
+            return;
         } else {
             functionSymbol = new FunctionSymbol(type, funName, current.getLayer());
             current.getSymbolTable().put(funName, functionSymbol);
@@ -177,17 +247,35 @@ public class Visitor {
             // 同时把参数加入
             visitFuncFParams(funcDef.getFuncFParams(), params);
         }
+        functionSymbol.setParams(params);
 
+        if (type.equals(SymbolType.VoidFunc)) {
+            voidFun++;
+        }
         visitBlock(funcDef.getBlock());
-
+        if (type.equals(SymbolType.VoidFunc)) {
+            voidFun--;
+        }
         // 符号表回来
         current = current.getLastLayer();
 //        // 为函数符号添加参数
 //        addParamToFunDef(funcDef.getFuncFParams());
-        functionSymbol.setParams(params);
 
-        // 检查 return 是否存在
-        if (type.equals(SymbolType.IntFunc) || type.equals(SymbolType.CharFunc)) {
+
+        // 检查 return 是否存在 g错误
+//        if (!type.equals(SymbolType.VoidFunc)) {
+//            if (!checkReturn(funcDef.getBlock())) {
+//                ErrorHandler.getInstance().addError(new Error(ErrorType.g, funcDef.getBlock().getRightBrace().getLine()));
+//            }
+//        }
+        if (!type.equals(SymbolType.VoidFunc)) {
+//            if (funcDef.getBlock().getBlockItemNodes().isEmpty()) {
+//                return;
+//            }
+//            BlockItemNode blockItemNode = funcDef.getBlock().getBlockItemNodes().get(funcDef.getBlock().getBlockItemNodes().size() - 1);
+//            if (!blockItemNode.getStmt().getType().equals(StmtNode.StmtType.Return)) {
+//                ErrorHandler.getInstance().addError(new Error(ErrorType.g, funcDef.getBlock().getRightBrace().getLine()));
+//            }
             if (!checkReturn(funcDef.getBlock())) {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.g, funcDef.getBlock().getRightBrace().getLine()));
             }
@@ -204,7 +292,6 @@ public class Visitor {
             // stmt to check return
             if (blockItemNode.getStmt().getType().equals(StmtNode.StmtType.Return)) {
                 hasReturn = true;
-                break;
             }
         }
         return hasReturn;
@@ -284,8 +371,26 @@ public class Visitor {
         //| 'printf''('StringConst {','Exp}')'';' // l
         StmtNode.StmtType type = stmtNode.getType();
         if (type.equals(StmtNode.StmtType.LVal)) {
+            // LVal '=' Exp ';' // h
+            if (visitLVal(stmtNode.getlValNode())) {
+                // error c
+                return;
+            }
+            Symbol lVal = findVariable(stmtNode.getlValNode().getIdentToken().getValue());
+            assert lVal != null;
+            if (lVal.getType().equals(SymbolType.ConstChar)
+                    || lVal.getType().equals(SymbolType.ConstInt)
+                    || lVal.getType().equals(SymbolType.ConstCharArray)
+                    || lVal.getType().equals(SymbolType.ConstIntArray)) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.h, stmtNode.getlValNode().getIdentToken().getLine()));
+                return;
+            }
+            visitExp(stmtNode.getExpNode());
 
         } else if (type.equals(StmtNode.StmtType.Exp)) {
+            if (stmtNode.getExpNode() != null) {
+                visitExp(stmtNode.getExpNode());
+            }
 
         } else if (type.equals(StmtNode.StmtType.Block)) {
             //| Block
@@ -296,33 +401,149 @@ public class Visitor {
             current = current.getLastLayer();
         } else if (type.equals(StmtNode.StmtType.IF)) {
             //| 'if' '(' Cond ')' Stmt [ 'else' Stmt ]
+            visitCond(stmtNode.getCondNode());
             for (StmtNode node : stmtNode.getStmtNodes()) {
                 visitStmt(node);
             }
 
         } else if (type.equals(StmtNode.StmtType.FOR)) {
             //| 'for' '(' [ForStmt] ';' [Cond] ';' [ForStmt] ')' Stmt // h
-            //
-
+            // forStmt
+            if (stmtNode.getForStmtNode1() != null) {
+                visitForStmt(stmtNode.getForStmtNode1());
+            }
+            if (stmtNode.getCondNode() != null) {
+                visitCond(stmtNode.getCondNode());
+            }
+            if (stmtNode.getForStmtNode2() != null) {
+                visitForStmt(stmtNode.getForStmtNode2());
+            }
+            loop++;
             // stmt
             visitStmt(stmtNode.getStmtNode());
+            loop--;
 
         } else if (type.equals(StmtNode.StmtType.Break)) {
-
+            //| 'break' ';' | 'continue' ';' // m
+            if (loop == 0) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.m, stmtNode.getBreakOrContinueToken().getLine()));
+            }
+        } else if (type.equals(StmtNode.StmtType.Continue)) {
+            //| 'break' ';' | 'continue' ';' // m
+            if (loop == 0) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.m, stmtNode.getBreakOrContinueToken().getLine()));
+            }
         } else if (type.equals(StmtNode.StmtType.Return)) {
-
+            //| 'return' [Exp] ';' // f
+            if (voidFun != 0 && stmtNode.getExpNode() != null) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.f, stmtNode.getReturnToken().getLine()));
+                return;
+            }
+            if (stmtNode.getExpNode() != null) {
+                visitExp(stmtNode.getExpNode());
+            }
         } else if (type.equals(StmtNode.StmtType.GetInt)) {
-
+            //| LVal '=' 'getint''('')'';' // h
+            if (visitLVal(stmtNode.getlValNode())) {
+                return;
+            }
+            Symbol lVal = findVariable(stmtNode.getlValNode().getIdentToken().getValue());
+            assert lVal != null;
+            if (lVal.getType().equals(SymbolType.ConstChar)
+                    || lVal.getType().equals(SymbolType.ConstInt)
+                    || lVal.getType().equals(SymbolType.ConstCharArray)
+                    || lVal.getType().equals(SymbolType.ConstIntArray)) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.h, stmtNode.getlValNode().getIdentToken().getLine()));
+            }
         } else if (type.equals(StmtNode.StmtType.GetChar)) {
-
+            //| LVal '=' 'getint''('')'';' // h
+            if (visitLVal(stmtNode.getlValNode())) {
+                return;
+            }
+            Symbol lVal = findVariable(stmtNode.getlValNode().getIdentToken().getValue());
+            assert lVal != null;
+            if (lVal.getType().equals(SymbolType.ConstChar)
+                    || lVal.getType().equals(SymbolType.ConstInt)
+                    || lVal.getType().equals(SymbolType.ConstCharArray)
+                    || lVal.getType().equals(SymbolType.ConstIntArray)) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.h, stmtNode.getlValNode().getIdentToken().getLine()));
+            }
         } else if (type.equals(StmtNode.StmtType.Printf)) {
-
+            //| 'printf''('StringConst {','Exp}')'';' // l
+            String formatString = stmtNode.getStringToken().getValue();
+            int lLen = 0;
+            lLen += formatString.split("%d").length + formatString.split("%c").length - 2;
+            int rLen = 0;
+            rLen = stmtNode.getExpNodes().size();
+            if (lLen != rLen) {
+                ErrorHandler.getInstance().addError(new Error(ErrorType.l, stmtNode.getPrintfToken().getLine()));
+            }
+            for (ExpNode expNode : stmtNode.getExpNodes()) {
+                visitExp(expNode);
+            }
         }
 
     }
 
+    private void visitCond(CondNode condNode) {
+        // Cond → LOrExp
+        visitLOrExp(condNode.getlOrExp());
+    }
+
+    private void visitLOrExp(LOrExpNode lOrExpNode) {
+        // LOrExp → LAndExp | LOrExp '||' LAndExp
+        visitLAndExp(lOrExpNode.getlAndExpNode());
+        if (lOrExpNode.getlOrExpNode() != null) {
+            visitLOrExp(lOrExpNode.getlOrExpNode());
+        }
+    }
+
+    private void visitLAndExp(LAndExpNode lAndExpNode) {
+        //  LAndExp → EqExp | LAndExp '&&' EqExp
+        visitEqExp(lAndExpNode.getEqExp());
+        if (lAndExpNode.getlAndExp() != null) {
+            visitLAndExp(lAndExpNode.getlAndExp());
+        }
+    }
+
+    private void visitEqExp(EqExpNode eqExpNode) {
+        // EqExp → RelExp | EqExp ('==' | '!=') RelExp
+        visitRelExp(eqExpNode.getRelExpNode());
+        if (eqExpNode.getEqExpNode() != null) {
+            visitEqExp(eqExpNode.getEqExpNode());
+        }
+    }
+
+    private void visitRelExp(RelExpNode relExpNode) {
+        // RelExp → AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp
+        visitAddExp(relExpNode.getAddExp());
+        if (relExpNode.getRelExp() != null) {
+            visitRelExp(relExpNode.getRelExp());
+        }
+    }
+
+
+
     //
-    private Symbol findTheVariable(String name) {
+    private void visitForStmt(ForStmtNode forStmtNode) {
+        //  ForStmt → LVal '=' Exp // h
+        if (visitLVal(forStmtNode.getlValNode())) {
+            // error
+            return;
+        }
+        Symbol lVal = findVariable(forStmtNode.getlValNode().getIdentToken().getValue());
+        assert lVal != null;
+        if (lVal.getType().equals(SymbolType.ConstChar)
+                || lVal.getType().equals(SymbolType.ConstInt)
+                || lVal.getType().equals(SymbolType.ConstCharArray)
+                || lVal.getType().equals(SymbolType.ConstIntArray)) {
+            ErrorHandler.getInstance().addError(new Error(ErrorType.h, forStmtNode.getlValNode().getIdentToken().getLine()));
+            return;
+        }
+        visitExp(forStmtNode.getExpNode());
+    }
+
+    private Symbol findVariable(String name) {
         SymbolTable temp = current;
         while (temp != null) {
             if (temp.getSymbolTable().containsKey(name)) {
@@ -333,9 +554,138 @@ public class Visitor {
         return null;
     }
 
-    // TODO
-    private void visitLVal(LValNode lValNode) {
+    //
+    private boolean visitLVal(LValNode lValNode) {
+        // LVal → Ident ['[' Exp ']'] // c
+        boolean hasErrorC = false;
+        Symbol ident = findVariable(lValNode.getIdentToken().getValue());
+        if (ident == null) {
+            ErrorHandler.getInstance().addError(new Error(ErrorType.c, lValNode.getIdentToken().getLine()));
+            hasErrorC = true;
+            return hasErrorC;
+        } else {
+//            if (lValNode.getExpNode() != null) {
+//                visitExp(lValNode.getExpNode());
+//            }
+            return hasErrorC;
+        }
+    }
 
+    //
+    private void visitExp(ExpNode expNode) {
+        if (expNode.getAddExpNode() != null) {
+            visitAddExp(expNode.getAddExpNode());
+        }
+    }
+
+    private void visitAddExp(AddExpNode addExpNode) {
+        //  AddExp → MulExp | AddExp ('+' | '−') MulExp
+        if (addExpNode.getMulExp() != null) {
+            visitMulExp(addExpNode.getMulExp());
+        }
+
+        if (addExpNode.getAddExp() != null) {
+            visitAddExp(addExpNode.getAddExp());
+        }
+    }
+
+    private void visitMulExp(MulExpNode mulExpNode) {
+        //  MulExp → UnaryExp | MulExp ('*' | '/' | '%') UnaryExp
+        if (mulExpNode.getUnaryExp() != null) {
+            visitUnaryExp(mulExpNode.getUnaryExp());
+        }
+
+        if (mulExpNode.getMulExp() != null) {
+            visitMulExp(mulExpNode.getMulExp());
+        }
+    }
+
+    private void visitUnaryExp(UnaryExpNode unaryExpNode) {
+        // UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp // c d e
+        if (unaryExpNode.getPrimary() != null) {
+            visitPrimaryExp(unaryExpNode.getPrimary());
+        } else if (unaryExpNode.getIdentToken() != null) {
+            // 函数调用
+            Symbol fun = findVariable(unaryExpNode.getIdentToken().getValue());
+            if (fun == null) {
+                // error c
+                ErrorHandler.getInstance().addError(new Error(ErrorType.c, unaryExpNode.getIdentToken().getLine()));
+                return;
+            }
+            fun = (FunctionSymbol)fun;
+            // 检查函数参数个数
+            if (((FunctionSymbol) fun).getParams().isEmpty()) {
+                if (unaryExpNode.getFuncRParams() != null) {
+                    // error d
+                    ErrorHandler.getInstance().addError(new Error(ErrorType.d, unaryExpNode.getIdentToken().getLine()));
+                    return;
+                }
+            } else {
+                if (unaryExpNode.getFuncRParams() == null || unaryExpNode.getFuncRParams().getExpNodes().size() != ((FunctionSymbol) fun).getParams().size()) {
+                    ErrorHandler.getInstance().addError(new Error(ErrorType.d, unaryExpNode.getIdentToken().getLine()));
+                    return;
+                }
+            }
+
+            // 检查函数参数类型是否匹配
+            if (((FunctionSymbol) fun).getParams().isEmpty()) {
+                // 空参数
+                return;
+            }
+            int index = unaryExpNode.getDefineIndex(); // index是第一个参数
+            int i = 0;
+            for (FunctionParam param : ((FunctionSymbol) fun).getParams()) { // 遍历每一个形参
+                while (!tokens.get(index).getType().equals(TokenType.IDENFR) && !tokens.get(index).getType().equals(TokenType.INTCON) && !tokens.get(index).getType().equals(TokenType.CHRCON)) {
+                    index++;
+                }
+                // 确定实参类型 var:0; intArr:1; charArr:2
+                int Rtype = -1;
+                if (tokens.get(index).getType().equals(TokenType.INTCON) || tokens.get(index).getType().equals(TokenType.CHRCON)) {
+                    Rtype = 0;
+                } else {
+                    Symbol variable = findVariable(tokens.get(index).getValue());
+                    assert variable != null;
+                    if (variable.getType().equals(SymbolType.IntArray) && !tokens.get(index + 1).getType().equals(TokenType.LBRACK)) {
+                        Rtype = 1;
+                    } else if (variable.getType().equals(SymbolType.CharArray) && !tokens.get(index + 1).getType().equals(TokenType.LBRACK)) {
+                        Rtype = 2;
+                    } else {
+                        Rtype = 0;
+                    }
+                }
+                // 确定形参类型
+                int Stype = -1;
+                if (param.getType().equals(SymbolType.IntArray)) {
+                    Stype = 1;
+                } else if (param.getType().equals(SymbolType.CharArray)) {
+                    Stype = 2;
+                } else {
+                    Stype = 0;
+                }
+                // 比较
+                if (Rtype != Stype) {
+                    ErrorHandler.getInstance().addError(new Error(ErrorType.e, unaryExpNode.getIdentToken().getLine()));
+
+                }
+                // 调到,
+                while (!tokens.get(index).getType().equals(TokenType.COMMA) && !tokens.get(index).getType().equals(TokenType.SEMICN)) {
+                    index++;
+                }
+            }
+
+
+        } else {
+            visitUnaryExp(unaryExpNode.getUnaryExp());
+        }
+    }
+
+    private void visitPrimaryExp(PrimaryExpNode primaryExpNode) {
+        // PrimaryExp → '(' Exp ')' | LVal | Number | Character
+        if (primaryExpNode.getExpNode() != null) {
+            visitExp(primaryExpNode.getExpNode());
+        } else if (primaryExpNode.getlValNode() != null) {
+            visitLVal(primaryExpNode.getlValNode());
+        }
     }
 
     //
@@ -344,7 +694,8 @@ public class Visitor {
         goToNextTable();
         visitBlock(mainFuncDef.getBlock());
         current = current.getLastLayer();
-        if (checkReturn(mainFuncDef.getBlock())) {
+
+        if (!checkReturn(mainFuncDef.getBlock())) {
             ErrorHandler.getInstance().addError(new Error(ErrorType.g, mainFuncDef.getBlock().getRightBrace().getLine()));
         }
     }

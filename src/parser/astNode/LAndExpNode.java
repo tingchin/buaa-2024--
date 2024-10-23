@@ -16,6 +16,18 @@ public class LAndExpNode implements Node {
         this.lAndExp = lAndExp;
     }
 
+    public EqExpNode getEqExp() {
+        return eqExp;
+    }
+
+    public Token getOperator() {
+        return operator;
+    }
+
+    public LAndExpNode getlAndExp() {
+        return lAndExp;
+    }
+
     @Override
     public void print() {
         eqExp.print();

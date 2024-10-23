@@ -16,6 +16,14 @@ public class MulExpNode implements Node {
         this.mulExp = mulExp;
     }
 
+    public UnaryExpNode getUnaryExp() {
+        return unaryExp;
+    }
+
+    public MulExpNode getMulExp() {
+        return mulExp;
+    }
+
     @Override
     public void print() {
         unaryExp.print();

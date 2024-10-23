@@ -575,6 +575,7 @@ public class Parser {
     private UnaryExpNode UnaryExp() {
         // UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp // j
         if (curToken.getType().equals(TokenType.IDENFR) && tokens.get(index + 1).getType().equals(TokenType.LPARENT)) {
+            int defineIndex = index + 2;
             Token identToken = curToken;
             if (index < tokens.size() - 1) {
                 curToken = tokens.get(++index);
@@ -599,7 +600,7 @@ public class Parser {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.j, tokens.get(index - 1).getLine()));
                 rightParen = new Token(TokenType.RPARENT, ")", tokens.get(index - 1).getLine());
             }
-            return new UnaryExpNode(identToken, leftParen, funcRParamsNode, rightParen);
+            return new UnaryExpNode(identToken, leftParen, funcRParamsNode, rightParen, defineIndex);
         } else if (curToken.getType().equals(TokenType.PLUS) || curToken.getType().equals(TokenType.MINU) || curToken.getType().equals(TokenType.NOT)) {
             UnaryOpNode unaryOpNode = UnaryOp();
             UnaryExpNode unaryExpNode = UnaryExp();

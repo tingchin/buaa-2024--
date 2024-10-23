@@ -10,6 +10,10 @@ public class ExpNode implements Node {
         this.addExpNode = addExpNode;
     }
 
+    public AddExpNode getAddExpNode() {
+        return addExpNode;
+    }
+
     @Override
     public void print() {
         addExpNode.print();

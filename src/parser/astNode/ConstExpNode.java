@@ -13,6 +13,10 @@ public class ConstExpNode implements Node {
         IOUtils.writeFile(Settings.syntaxOutputPath, "<ConstExp>\n");
     }
 
+    public AddExpNode getAddExp() {
+        return addExp;
+    }
+
     public ConstExpNode(AddExpNode addExp) {
         this.addExp = addExp;
     }

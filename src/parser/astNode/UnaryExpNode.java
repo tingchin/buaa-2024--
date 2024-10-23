@@ -13,12 +13,18 @@ public class UnaryExpNode implements Node {
     private Token rightParen;
     private UnaryOpNode unaryOp;
     private UnaryExpNode unaryExp;
+    private int defineIndex;
 
-    public UnaryExpNode(Token identToken, Token leftParen, FuncRParamsNode funcRParams, Token rightParen) {
+    public UnaryExpNode(Token identToken, Token leftParen, FuncRParamsNode funcRParams, Token rightParen, int defineIndex) {
         this.identToken = identToken;
         this.leftParen = leftParen;
         this.funcRParams = funcRParams;
         this.rightParen = rightParen;
+        this.defineIndex = defineIndex;
+    }
+
+    public int getDefineIndex() {
+        return defineIndex;
     }
 
     public UnaryExpNode(PrimaryExpNode primary) {
@@ -28,6 +34,22 @@ public class UnaryExpNode implements Node {
     public UnaryExpNode(UnaryOpNode unaryOp, UnaryExpNode unaryExp) {
         this.unaryOp = unaryOp;
         this.unaryExp = unaryExp;
+    }
+
+    public PrimaryExpNode getPrimary() {
+        return primary;
+    }
+
+    public Token getIdentToken() {
+        return identToken;
+    }
+
+    public FuncRParamsNode getFuncRParams() {
+        return funcRParams;
+    }
+
+    public UnaryExpNode getUnaryExp() {
+        return unaryExp;
     }
 
     @Override

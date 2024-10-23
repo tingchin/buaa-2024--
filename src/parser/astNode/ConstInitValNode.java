@@ -15,6 +15,30 @@ public class ConstInitValNode implements Node{
     private Token rightBrace;
     private Token stringToken;
 
+    public ConstExpNode getConstExp() {
+        return constExp;
+    }
+
+    public Token getLeftBrace() {
+        return leftBrace;
+    }
+
+    public List<ConstExpNode> getConstExpNodes() {
+        return constExpNodes;
+    }
+
+    public List<Token> getCommas() {
+        return commas;
+    }
+
+    public Token getRightBrace() {
+        return rightBrace;
+    }
+
+    public Token getStringToken() {
+        return stringToken;
+    }
+
     public ConstInitValNode(ConstExpNode constExp, Token leftBrace, List<ConstExpNode> constExpNodes, List<Token> commas, Token rightBrace, Token stringToken) {
         this.constExp = constExp;
         this.leftBrace = leftBrace;

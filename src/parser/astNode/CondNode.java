@@ -10,6 +10,10 @@ public class CondNode implements Node {
         this.lOrExp = lOrExp;
     }
 
+    public LOrExpNode getlOrExp() {
+        return lOrExp;
+    }
+
     @Override
     public void print() {
         lOrExp.print();

@@ -23,6 +23,11 @@ public class ErrorHandler {
 
     public void addError(Error error) {
         haveError = true;
+        for (Error error1 : errors) {
+            if (error1.getLine() == error.getLine()) {
+                return;
+            }
+        }
         instance.errors.add(error);
     }
     public boolean isHaveError() {

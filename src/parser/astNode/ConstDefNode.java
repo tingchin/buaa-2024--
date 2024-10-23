@@ -7,6 +7,10 @@ import utils.Settings;
 import java.util.List;
 
 public class ConstDefNode implements Node {
+    public ConstInitValNode getConstInitValNode() {
+        return constInitValNode;
+    }
+
     @Override
     public void print() {
         IOUtils.writeFile(Settings.syntaxOutputPath, identToken.toString());

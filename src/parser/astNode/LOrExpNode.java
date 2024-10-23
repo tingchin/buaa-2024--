@@ -16,6 +16,14 @@ public class LOrExpNode implements Node {
         this.lOrExpNode = lOrExpNode;
     }
 
+    public LAndExpNode getlAndExpNode() {
+        return lAndExpNode;
+    }
+
+    public LOrExpNode getlOrExpNode() {
+        return lOrExpNode;
+    }
+
     @Override
     public void print() {
         lAndExpNode.print();

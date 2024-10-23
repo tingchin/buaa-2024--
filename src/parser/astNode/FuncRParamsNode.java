@@ -16,6 +16,10 @@ public class FuncRParamsNode implements Node {
         this.commas = commas;
     }
 
+    public List<ExpNode> getExpNodes() {
+        return expNodes;
+    }
+
     @Override
     public void print() {
         expNodes.get(0).print();

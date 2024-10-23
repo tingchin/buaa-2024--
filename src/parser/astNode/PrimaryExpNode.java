@@ -31,6 +31,14 @@ public class PrimaryExpNode implements Node {
         this.lValNode = lValNode;
     }
 
+    public ExpNode getExpNode() {
+        return expNode;
+    }
+
+    public LValNode getlValNode() {
+        return lValNode;
+    }
+
     @Override
     public void print() {
         if (expNode != null) {
