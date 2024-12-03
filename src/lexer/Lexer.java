@@ -62,13 +62,14 @@ public class Lexer {
         put(']', TokenType.RBRACK);
     }};
     // 词法分析
+
     public void lexerAnalyze(String sourceCode) {
         int line = 1;
         int codeLen = sourceCode.length();
 
         char curChar;
         char nextChar;
-        int number;
+        //int number;
         String tokenValue;
         for (int i = 0; i < codeLen;) {
             curChar = sourceCode.charAt(i);
@@ -132,18 +133,6 @@ public class Lexer {
             } else if (singleChars.containsKey(curChar)) { // 单字符分界 + - * / ; , () [] {}
                 tokensList.add(new Token(singleChars.get(curChar), String.valueOf(curChar), line));
             } else if (curChar == '\'') { // 字符常量
-//                StringBuilder sbToken = new StringBuilder();
-//                sbToken.append(curChar);
-//                i++;
-//                while ((i < codeLen) && (sourceCode.charAt(i) != '\'')) {
-//                    sbToken.append(sourceCode.charAt(i));
-//                    i++;
-//                }
-//                sbToken.append(sourceCode.charAt(i));
-//                tokenValue = sbToken.toString();
-//                tokensList.add(new Token(TokenType.CHRCON, tokenValue, line));
-//                i++;
-//                continue;
                 StringBuilder sbToken = new StringBuilder();
                 sbToken.append(curChar);
                 i++;

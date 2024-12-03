@@ -10,6 +10,10 @@ public class MulExpNode implements Node {
     private Token operator;
     private MulExpNode mulExp;
 
+    public Token getOperator() {
+        return operator;
+    }
+
     public MulExpNode(UnaryExpNode unaryExp, Token operator, MulExpNode mulExp) {
         this.unaryExp = unaryExp;
         this.operator = operator;

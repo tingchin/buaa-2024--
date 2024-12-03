@@ -18,6 +18,10 @@ public class AddExpNode implements Node {
         return addExp;
     }
 
+    public Token getOperator() {
+        return operator;
+    }
+
     public AddExpNode(MulExpNode mulExp, Token operator, AddExpNode addExp) {
         this.mulExp = mulExp;
         this.operator = operator;

@@ -35,6 +35,14 @@ public class PrimaryExpNode implements Node {
         return expNode;
     }
 
+    public CharacterNode getCharacterNode() {
+        return characterNode;
+    }
+
+    public NumberNode getNumberNode() {
+        return numberNode;
+    }
+
     public LValNode getlValNode() {
         return lValNode;
     }

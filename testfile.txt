@@ -1,8 +1,0 @@
-char func(char c[]) {
-    return c[0];
-}
-int main() {
-    int e = 5;
-    int c = func(e); //传值给数组:e
-    return 0;
-}

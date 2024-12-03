@@ -11,7 +11,7 @@ import symbol.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 public class Visitor {
     private SymbolTable current;
@@ -20,6 +20,7 @@ public class Visitor {
     private SymbolTable global;
     private int voidFun;
     private List<Token> tokens;
+
 
     public Visitor() {
         this.voidFun = 0;
@@ -612,6 +613,7 @@ public class Visitor {
                 ErrorHandler.getInstance().addError(new Error(ErrorType.c, unaryExpNode.getIdentToken().getLine()));
                 return;
             }
+
             fun = (FunctionSymbol)fun;
             // 检查函数参数个数
             if (((FunctionSymbol) fun).getParams().isEmpty()) {
@@ -633,49 +635,114 @@ public class Visitor {
                 return;
             }
             int index = unaryExpNode.getDefineIndex(); // index是第一个参数
-            int i = 0;
-            for (FunctionParam param : ((FunctionSymbol) fun).getParams()) { // 遍历每一个形参
-                while (!tokens.get(index).getType().equals(TokenType.IDENFR) && !tokens.get(index).getType().equals(TokenType.INTCON) && !tokens.get(index).getType().equals(TokenType.CHRCON)) {
-                    index++;
-                }
-                // 确定实参类型 var:0; intArr:1; charArr:2
-                int Rtype = -1;
-                if (tokens.get(index).getType().equals(TokenType.INTCON) || tokens.get(index).getType().equals(TokenType.CHRCON)) {
-                    Rtype = 0;
-                } else {
-                    Symbol variable = findVariable(tokens.get(index).getValue());
-                    assert variable != null;
-                    if (variable.getType().equals(SymbolType.IntArray) && !tokens.get(index + 1).getType().equals(TokenType.LBRACK)) {
-                        Rtype = 1;
-                    } else if (variable.getType().equals(SymbolType.CharArray) && !tokens.get(index + 1).getType().equals(TokenType.LBRACK)) {
-                        Rtype = 2;
-                    } else {
-                        Rtype = 0;
-                    }
-                }
-                // 确定形参类型
+            for (int i = 0; i < ((FunctionSymbol) fun).getParams().size(); i++) {
+                // 确定形参
                 int Stype = -1;
-                if (param.getType().equals(SymbolType.IntArray)) {
+                if (((FunctionSymbol) fun).getParams().get(i).getType().equals(SymbolType.IntArray)) {
                     Stype = 1;
-                } else if (param.getType().equals(SymbolType.CharArray)) {
+                } else if (((FunctionSymbol) fun).getParams().get(i).getType().equals(SymbolType.CharArray)) {
                     Stype = 2;
                 } else {
                     Stype = 0;
                 }
-                // 比较
+                // 确定实参
+                int Rtype = -1;
+                Rtype = getRParamType(unaryExpNode.getFuncRParams().getExpNodes().get(i));
                 if (Rtype != Stype) {
                     ErrorHandler.getInstance().addError(new Error(ErrorType.e, unaryExpNode.getIdentToken().getLine()));
+                }
 
-                }
-                // 调到,
-                while (!tokens.get(index).getType().equals(TokenType.COMMA) && !tokens.get(index).getType().equals(TokenType.SEMICN)) {
-                    index++;
-                }
             }
+//            for (FunctionParam param : ((FunctionSymbol) fun).getParams()) { // 遍历每一个形参
+//                while (!tokens.get(index).getType().equals(TokenType.IDENFR) && !tokens.get(index).getType().equals(TokenType.INTCON) && !tokens.get(index).getType().equals(TokenType.CHRCON)) {
+//                    index++;
+//                }
+//                // 确定实参类型 var:0; intArr:1; charArr:2
+//                int Rtype = -1;
+//                if (tokens.get(index).getType().equals(TokenType.INTCON) || tokens.get(index).getType().equals(TokenType.CHRCON)) {
+//                    Rtype = 0;
+//                } else {
+//                    Symbol variable = findVariable(tokens.get(index).getValue());
+//                    assert variable != null;
+//                    if (variable.getType().equals(SymbolType.IntArray) && !tokens.get(index + 1).getType().equals(TokenType.LBRACK)) {
+//                        Rtype = 1;
+//                    } else if (variable.getType().equals(SymbolType.CharArray) && !tokens.get(index + 1).getType().equals(TokenType.LBRACK)) {
+//                        Rtype = 2;
+//                    } else {
+//                        Rtype = 0;
+//                    }
+//                }
+//                // 确定形参类型
+//                int Stype = -1;
+//                if (param.getType().equals(SymbolType.IntArray)) {
+//                    Stype = 1;
+//                } else if (param.getType().equals(SymbolType.CharArray)) {
+//                    Stype = 2;
+//                } else {
+//                    Stype = 0;
+//                }
+//                // 比较
+//                if (Rtype != Stype) {
+//                    ErrorHandler.getInstance().addError(new Error(ErrorType.e, unaryExpNode.getIdentToken().getLine()));
+//
+//                }
+//                // 调到,
+//                while (!tokens.get(index).getType().equals(TokenType.COMMA) && !tokens.get(index).getType().equals(TokenType.SEMICN)) {
+//                    index++;
+//                }
+//            }
 
 
         } else {
             visitUnaryExp(unaryExpNode.getUnaryExp());
+        }
+    }
+
+    private int getRParamType(ExpNode expNode) {
+        return checkExp(expNode);
+    }
+
+    private int checkExp(ExpNode expNode) {
+        return checkAddExp(expNode.getAddExpNode());
+    }
+
+    private int checkAddExp(AddExpNode addExpNode) {
+        return checkMulExp(addExpNode.getMulExp());
+    }
+
+    private int checkMulExp(MulExpNode mulExp) {
+        return checkUnaryExp(mulExp.getUnaryExp());
+    }
+
+    private int checkUnaryExp(UnaryExpNode unaryExp) {
+        if (unaryExp.getIdentToken() != null) {
+            return 0;
+        } else if (unaryExp.getPrimary() != null) {
+            return checkPrimaryExp(unaryExp.getPrimary());
+        } else {
+            return checkUnaryExp(unaryExp.getUnaryExp());
+        }
+    }
+
+    private int checkPrimaryExp(PrimaryExpNode primary) {
+        if (primary.getExpNode() != null) {
+            return checkExp(primary.getExpNode());
+        } else if (primary.getlValNode() != null) {
+            return checkLVal(primary.getlValNode());
+        } else {
+            return 0;
+        }
+    }
+
+    private int checkLVal(LValNode lValNode) {
+        Symbol variable = findVariable(lValNode.getIdentToken().getValue());
+        assert variable != null;
+        if (variable.getType().equals(SymbolType.IntArray) && lValNode.getLeftBracketToken() == null) {
+            return 1;
+        } else if (variable.getType().equals(SymbolType.CharArray) && lValNode.getLeftBracketToken() == null) {
+            return 2;
+        } else {
+            return 0;
         }
     }
 

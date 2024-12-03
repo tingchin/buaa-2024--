@@ -27,6 +27,10 @@ public class UnaryExpNode implements Node {
         return defineIndex;
     }
 
+    public UnaryOpNode getUnaryOp() {
+        return unaryOp;
+    }
+
     public UnaryExpNode(PrimaryExpNode primary) {
         this.primary = primary;
     }

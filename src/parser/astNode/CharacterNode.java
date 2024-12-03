@@ -11,6 +11,10 @@ public class CharacterNode implements Node {
         this.token = token;
     }
 
+    public Token getToken() {
+        return token;
+    }
+
     @Override
     public void print() {
         IOUtils.writeFile(Settings.syntaxOutputPath, token.toString());

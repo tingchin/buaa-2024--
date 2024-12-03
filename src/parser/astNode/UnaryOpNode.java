@@ -11,6 +11,10 @@ public class UnaryOpNode implements Node {
         this.operator = operator;
     }
 
+    public Token getOperator() {
+        return operator;
+    }
+
     @Override
     public void print() {
         IOUtils.writeFile(Settings.syntaxOutputPath, operator.toString());

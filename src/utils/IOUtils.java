@@ -30,4 +30,16 @@ public class IOUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static void delete(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    public static void clear(String path) {
+        delete(path);
+        writeFile(path, "");
+    }
 }
